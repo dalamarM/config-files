@@ -41,8 +41,7 @@ There are two things you can do about this warning:
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  '(package-selected-packages
-   (quote
-    (dumb-jump avy magit smex ido-completing-read+ flycheck-clj-kondo helm-ag ag flycheck sayid rainbow-delimiters clj-refactor undo-tree helm-cider helm paredit company guide-key helm-projectile zenburn-theme neotree projectile spinner cider)))
+   '(visual-regexp-steroids visual-regexp cljr-helm egg russian-holidays crux cl-lib togetherly ace-window dumb-jump avy magit smex ido-completing-read+ flycheck-clj-kondo helm-ag ag flycheck sayid rainbow-delimiters clj-refactor undo-tree helm-cider helm paredit company guide-key helm-projectile zenburn-theme neotree projectile spinner cider))
  '(split-height-threshold 1)
  '(split-width-threshold 0))
 (custom-set-faces
@@ -52,24 +51,33 @@ There are two things you can do about this warning:
  ;; If there is more than one, they won't work right.
  )
 (load-theme 'zenburn t)
-(set-frame-font "Deja Vu Sans Mono 14" nil t)
+(set-frame-font "DejaVu Sans Mono 14" nil t)
 (projectile-mode +1)
-(define-key projectile-mode-map (kbd "s-[") 'projectile-command-map)
+(define-key projectile-mode-map (kbd "M-[") 'projectile-command-map)
 (define-key projectile-mode-map (kbd "C-c p") 'projectile-command-map)
 (setq cider-repl-display-help-banner nil)
 (require 'guide-key)
 (setq guide-key/guide-key-sequence '("C-c C-m"))
 (guide-key-mode 1)  ; Enable guide-key-mode
 (tool-bar-mode -1)
+(menu-bar-mode -1)
 ;; (setq projectile-switch-project-action 'neotree-projectile-action)
 					;(neotree-toggle)
 ;; (delete-selection-mode 1)
-(add-hook 'cider-repl-mode-hook #'visual-line-mode)
+;; (add-hook 'cider-repl-mode-hook #'visual-line-mode)
+
+(add-hook 'cider-repl-mode-hook #'company-mode)
+(add-hook 'cider-mode-hook #'company-mode)
+
+(add-hook 'cider-repl-mode-hook #'cider-company-enable-fuzzy-completion)
+(add-hook 'cider-mode-hook #'cider-company-enable-fuzzy-completion)
+
 (setq company-dabbrev-downcase 0)
 (setq company-idle-delay 0)
 
 (require 'flycheck-clj-kondo)
 (add-hook 'clojure-mode-hook #'my-clojure-mode-hook)
+
 (setq ring-bell-function 'ignore)
 (helm-cider-mode +1)
 (eval-after-load 'clojure-mode
@@ -79,5 +87,28 @@ There are two things you can do about this warning:
 (require 'smex)
 (smex-initialize)
 (global-set-key (kbd "M-x") 'smex)
-     
+(global-set-key (kbd "M-o") 'ace-window)     
 (global-set-key (kbd "C-'") 'avy-goto-char-timer)
+(global-set-key (kbd "C-c c") 'cider-jack-in-clj)
+(global-set-key (kbd "C-c x") 'cider-connect-clj)
+(global-set-key (kbd "C-x b") 'helm-buffers-list)
+(global-set-key (kbd "C-M-l") 'paredit-copy-as-kill)
+(global-set-key (kbd "C-S-f") 'helm-projectile-ag)
+(global-set-key (kbd "C-S-t") 'helm-projectile)
+
+
+;; if the files are not already in the load path
+(add-to-list 'load-path "folder-to/visual-regexp/")
+(add-to-list 'load-path "folder-to/visual-regexp-steroids/")
+(require 'visual-regexp-steroids)
+(define-key global-map (kbd "C-c r") 'vr/replace)
+(define-key global-map (kbd "C-c q") 'vr/query-replace)
+;; if you use multiple-cursors, this is for you:
+(define-key global-map (kbd "C-c m") 'vr/mc-mark)
+;; to use visual-regexp-steroids's isearch instead of the built-in regexp isearch, also include the following lines:
+(define-key esc-map (kbd "C-M-r") 'vr/isearch-backward) ;; C-M-r
+(define-key esc-map (kbd "C-M-s") 'vr/isearch-forward) ;; C-M-s
+
+
+(require 'calendar)
+
